@@ -33,8 +33,8 @@ function SlideTextBlock({ current, diagramColumn }) {
         fontSize={{
           base: "3xl",
           md: "4xl",
-          lg: diagramColumn ? "4xl" : "5xl",
-          xl: diagramColumn ? "4xl" : "6xl",
+          lg: "5xl",
+          xl: "6xl",
         }}
         fontWeight="700"
         lineHeight="1.05"
@@ -130,10 +130,11 @@ const slides = [
     bullets: [
       "Creator UI revamp",
       "Creator UI screenshots",
-      "Branching & out UI",
+      "Branching In and Out UI",
       "Selectors integrations",
       "Fallback strategy & auto-healing",
       "Impact over time",
+      "Thank you",
     ],
   },
   {
@@ -164,7 +165,7 @@ const slides = [
   {
     id: "branching",
     kicker: "Flows",
-    title: "Branching & out UI",
+    title: "Branching In and Out UI",
     subtitle:
       "Route players into child guides when conditions on the page match — configured in the creator, evaluated during playback at the right moment.",
     bullets: [
@@ -218,6 +219,15 @@ const slides = [
       "These pieces compound: a better creator, clearer branching, stronger selectors, and resilient execution — delivering lasting value as you scale.",
     bullets: [],
     isClosing: true,
+  },
+  {
+    id: "thank-you",
+    kicker: "Closing",
+    title: "Thank you",
+    subtitle:
+      "That’s a wrap on V8. Questions or feedback — reach out to the team. You can start the deck again anytime.",
+    bullets: [],
+    isThankYou: true,
   },
 ];
 
@@ -372,12 +382,49 @@ export default function App() {
                   <SlideTextBlock current={current} diagramColumn={false} />
                   <CreatorUIShowcase />
                 </VStack>
+              ) : current.isThankYou ? (
+                <Flex
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  textAlign="center"
+                  w="100%"
+                  maxW="720px"
+                  mx="auto"
+                  py={{ base: 10, md: 14 }}
+                  px={2}
+                >
+                  <Text
+                    fontSize="sm"
+                    fontWeight="600"
+                    color="brand.300"
+                    textTransform="uppercase"
+                    letterSpacing="0.2em"
+                    fontFamily="heading"
+                    mb={4}
+                  >
+                    {current.kicker}
+                  </Text>
+                  <Heading
+                    as="h1"
+                    fontSize={{ base: "4xl", md: "5xl", lg: "6xl" }}
+                    fontWeight="700"
+                    letterSpacing="-0.03em"
+                    bgGradient="linear(to-r, white, gray.400)"
+                    bgClip="text"
+                    mb={6}
+                  >
+                    {current.title}
+                  </Heading>
+                  <Text fontSize={{ base: "lg", md: "xl" }} color="whiteAlpha.800" lineHeight="1.7">
+                    {current.subtitle}
+                  </Text>
+                </Flex>
               ) : (
                 <VStack
                   align="stretch"
                   spacing={8}
                   maxW={current.isClosing ? "100%" : "1040px"}
-                  mx={current.isClosing ? 0 : "auto"}
                   w="100%"
                 >
                   <SlideTextBlock current={current} diagramColumn={false} />
@@ -468,17 +515,22 @@ export default function App() {
               size="lg"
               borderRadius="xl"
               px={8}
-              onClick={() => go(1)}
-              isDisabled={index === total - 1}
-              rightIcon={<ChevronRightIcon />}
+              onClick={() => {
+                if (index === total - 1) {
+                  setIndex(0);
+                } else {
+                  go(1);
+                }
+              }}
+              rightIcon={index === total - 1 ? undefined : <ChevronRightIcon />}
             >
-              {index === total - 1 ? "End" : "Next"}
+              {index === total - 1 ? "Start over" : "Next"}
             </Button>
           </HStack>
         </HStack>
 
         <Text fontSize="xs" color="whiteAlpha.400" mt={3} textAlign="center" flexShrink={0}>
-          Use arrow keys, Space, or Page Up/Down · Home / End for first / last slide
+          Arrow keys, Space, Page Up/Down · Home / End · On the last slide, Start over returns to the beginning
         </Text>
       </Flex>
     </Box>
