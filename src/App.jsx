@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { SLIDE_COUNT } from "./deckInfo.js";
 import {
   Box,
   Button,
@@ -233,8 +234,17 @@ const slides = [
 
 const MotionBox = motion(Box);
 
+function readSlideIndexFromUrl() {
+  if (typeof window === "undefined") return 0;
+  const raw = new URLSearchParams(window.location.search).get("slide");
+  if (raw === null || raw === "") return 0;
+  const n = Number.parseInt(raw, 10);
+  if (Number.isNaN(n)) return 0;
+  return Math.min(Math.max(0, n), slides.length - 1);
+}
+
 export default function App() {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(readSlideIndexFromUrl);
   const total = slides.length;
   const current = slides[index];
 
@@ -264,6 +274,20 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go, total]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("slide", String(index));
+    window.history.replaceState({}, "", url);
+  }, [index]);
+
+  useEffect(() => {
+    if (import.meta.env.DEV && slides.length !== SLIDE_COUNT) {
+      console.warn(
+        `[deck] Update src/deckInfo.js: SLIDE_COUNT is ${SLIDE_COUNT} but slides.length is ${slides.length}`
+      );
+    }
+  }, []);
 
   return (
     <Box
